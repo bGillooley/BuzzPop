@@ -1,11 +1,83 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+import Head from "next/head";
+import { GetServerSideProps } from "next";
+import { Inter } from "next/font/google";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import prisma from "../lib/prisma";
+import Header from "@/components/Header";
+import { MdOutlineAdd } from "react-icons/md";
+const inter = Inter({ subsets: ["latin"] });
+export const getServerSideProps: GetServerSideProps = async () => {
+  const initialResults = await prisma.post.findMany({
+    include: {
+      categories: true,
+    },
+  });
+  return {
+    props: { initialResults },
+  };
+};
 
-const inter = Inter({ subsets: ['latin'] })
+export default function Home({ initialResults }) {
+  console.log("This stuff...", initialResults);
+  const [notesData, setNotesData] = useState(initialResults);
+  const [darkTheme, setDarkTheme] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [activeFilter, setActiveFilter] = useState("");
+  const handleDarkThemeToggle = () => {
+    setDarkTheme(!darkTheme);
+  };
+  const storeUserSetPreference = (pref) => {
+    localStorage.setItem("theme", pref);
+  };
 
-export default function Home() {
+  useEffect(() => {
+    const root = document.documentElement;
+    if (root.classList.contains("dark")) {
+      setDarkTheme(true);
+    }
+    setActiveFilter("z0");
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (darkTheme !== undefined) {
+      if (darkTheme) {
+        root.classList.remove("light");
+        root.classList.add("dark");
+        storeUserSetPreference("dark");
+      } else {
+        root.classList.remove("dark");
+        root.classList.add("light");
+        storeUserSetPreference("light");
+      }
+    }
+  }, [darkTheme]);
+
+  useEffect(() => {
+    async function loadCats() {
+      const res = await fetch("api/get-categories");
+      const currentCats = await res.json();
+      setCategories(currentCats);
+    }
+    loadCats();
+  }, []);
+
+  async function filterResults(cat) {
+    const res = await fetch(`/api/filter-notes?name=${cat}`);
+    const filtered = await res.json();
+    setNotesData(filtered);
+  }
+  async function getAllResults() {
+    const res = await fetch("/api/all-notes");
+    const notes = await res.json();
+    setNotesData(notes);
+  }
+
+  function activateFilterSelected(id) {
+    setActiveFilter(id);
+  }
+
   return (
     <>
       <Head>
@@ -14,110 +86,61 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
+      <Header />
+      <div className="w-full min-h-screen bg-slate-100 dark:bg-stone-800 ">
+        <div className="max-w-md pt-16 mx-auto px-4">
+          <div className="whitespace-nowrap w-full overflow-x-auto pb-6">
+            <button
+              className={`mr-2 p-2 border-2 border-blue-700 rounded-md ${
+                activeFilter === "z0" && "bg-blue-700 text-white"
+              }`}
+              id="z0"
+              onClick={() => {
+                getAllResults();
+                activateFilterSelected("z0");
+              }}
             >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
+              ALL
+            </button>
+            {categories.map((category) => (
+              <button
+                className={`mr-2 p-2 border-2 border-blue-700 rounded-md ${
+                  activeFilter === "z" + category.id &&
+                  " focus:bg-blue-700 focus:text-white"
+                }`}
+                key={category.id}
+                id={"z" + category.id}
+                onClick={() => {
+                  filterResults(category.name);
+                  activateFilterSelected("z" + category.id);
+                  console.log("LOOOOOK: Look: ...", activeFilter);
+                }}
+              >
+                {category.name}
+              </button>
+            ))}
           </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
+          <div className="relative columns-2">
+            {notesData.map((post) => (
+              <div
+                key={post.id}
+                className="bg-white rounded-lg shadow-3xl shadow-stone-900 p-4 mb-4"
+              >
+                <span className="whitespace-pre-line">{post.content}</span>
+              </div>
+            ))}
+            <button className="hidden" onClick={() => setDarkTheme(!darkTheme)}>
+              Set dark mode
+            </button>
           </div>
+          <Link href="/create" passHref legacyBehavior>
+            <button className="fixed flex justify-center items-center bottom-4 right-4 p-4 text-4xl bg-blue-700 rounded-full text-white shadow-md">
+              <MdOutlineAdd />{" "}
+              <span className="hidden md:inline-block text-lg">Add Note</span>
+            </button>
+          </Link>
         </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+      </div>
     </>
-  )
+  );
 }
