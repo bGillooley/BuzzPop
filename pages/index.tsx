@@ -6,6 +6,7 @@ import Link from "next/link";
 import prisma from "../lib/prisma";
 import Header from "@/components/Header";
 import { MdOutlineAdd } from "react-icons/md";
+import { useRouter } from "next/router";
 const inter = Inter({ subsets: ["latin"] });
 export const getServerSideProps: GetServerSideProps = async () => {
   const initialResults = await prisma.post.findMany({
@@ -19,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 export default function Home({ initialResults }) {
-  console.log("This stuff...", initialResults);
+  const router = useRouter();
   const [notesData, setNotesData] = useState(initialResults);
   const [darkTheme, setDarkTheme] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -91,7 +92,7 @@ export default function Home({ initialResults }) {
         <div className="max-w-md pt-16 mx-auto px-4">
           <div className="whitespace-nowrap w-full overflow-x-auto pb-6">
             <button
-              className={`mr-2 p-2 border-2 border-blue-700 rounded-md ${
+              className={`mr-2 p-2 border-2 border-blue-700 dark:text-white rounded-md ${
                 activeFilter === "z0" && "bg-blue-700 text-white"
               }`}
               id="z0"
@@ -104,7 +105,7 @@ export default function Home({ initialResults }) {
             </button>
             {categories.map((category) => (
               <button
-                className={`mr-2 p-2 border-2 border-blue-700 rounded-md ${
+                className={`mr-2 p-2 border-2 border-blue-700 dark:text-white rounded-md ${
                   activeFilter === "z" + category.id &&
                   " focus:bg-blue-700 focus:text-white"
                 }`}
@@ -138,10 +139,16 @@ export default function Home({ initialResults }) {
           </Link>
           <div className="fixed bottom-4 left-4">
             <button
-              className="px-4 py-2 bg-blue-700 text-white rounded-md"
+              className="hidden px-4 py-2 bg-blue-700 text-white rounded-md"
               onClick={() => setDarkTheme(!darkTheme)}
             >
               Set {darkTheme ? "light" : "dark"} mode
+            </button>
+            <button
+              className="px-4 py-2 bg-blue-700 text-white rounded-md"
+              onClick={() => router.push("/create-category")}
+            >
+              Add New Category
             </button>
           </div>
         </div>

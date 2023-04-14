@@ -1,12 +1,30 @@
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { GetServerSideProps } from "next";
+import { MdOutlineArrowBackIosNew } from "react-icons/md";
+import { BsTrash } from "react-icons/bs";
+import prisma from "../lib/prisma";
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const categories = await prisma.category.findMany();
+  return {
+    props: { categories },
+  };
+};
+
+async function deletePost(id: string): Promise<void> {
+  await fetch(`/api/post-note/${id}`, {
+    method: "DELETE",
+  });
+  Router.reload();
+}
 
 export type CategoryProps = {
   name: string;
 };
 
-const Category: React.FC = () => {
+const Category: React.FC = ({ categories }) => {
   const inputEl = useRef(null);
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -21,7 +39,7 @@ const Category: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      await router.push("/");
+      router.replace(router.asPath);
     } catch (error) {
       console.error(error);
     }
@@ -35,19 +53,45 @@ const Category: React.FC = () => {
   }, []);
 
   return (
-    <div className="max-w-2xl pt-36 mx-auto px-4">
-      <form onSubmit={submitData}>
-        <h1>Add new category</h1>
-        <input
-          type="text"
-          onChange={(e) => setCategory(e.target.value)}
-          value={category}
-          ref={inputEl}
-        />
+    <>
+      <div className="fixed z-40">
+        <button className="text-3xl p-4" onClick={() => router.push("/")}>
+          <MdOutlineArrowBackIosNew />
+        </button>
+      </div>
+      <div className="max-w-2xl px-4 pt-16 mx-auto">
+        <form onSubmit={submitData} className="mb-8">
+          <h1 className="text-2xl pb-2">Add new category</h1>
+          <input
+            className="w-full mb-4 rounded-md p-2 border-2 border-stone-400"
+            type="text"
+            onChange={(e) => setCategory(e.target.value)}
+            value={category}
+            ref={inputEl}
+          />
 
-        <input type="submit" value="Add Category" />
-      </form>
-    </div>
+          <input
+            className="px-4 py-2 rounded-full font-semibold bg-blue-700 text-white"
+            type="submit"
+            value="Add Category"
+          />
+        </form>
+        {categories.map((cat) => (
+          <div
+            key={cat.id}
+            className="flex justify-between items-center border-b py-2 shadow-sm my-4"
+          >
+            <div className="text-xl bold">{cat.name}</div>
+            <div
+              className="flex text-red-700"
+              onClick={() => deletePost(cat.id)}
+            >
+              <BsTrash />
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 

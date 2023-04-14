@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import prisma from "../lib/prisma";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-
+import { MdOutlineArrowBackIosNew } from "react-icons/md";
 export const getServerSideProps: GetServerSideProps = async () => {
   const categories = await prisma.category.findMany();
   return {
@@ -29,7 +29,7 @@ const Note: React.FC = ({ categories }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      await router.push("/");
+      router.push("/");
     } catch (error) {
       console.error(error);
     }
@@ -43,40 +43,47 @@ const Note: React.FC = ({ categories }) => {
   }, []);
 
   return (
-    <div className="max-w-2xl px-4 pt-12 mx-auto">
-      <form onSubmit={submitData}>
-        <h1 className="text-2xl pb-4">Add new note</h1>
-        <textarea
-          className="w-full rounded-md p-2 border-2 border-stone-400"
-          onChange={(e) => {
-            setContent(e.target.value);
-            console.log(content);
-          }}
-          placeholder="Content"
-          rows={8}
-          value={content}
-          ref={inputEl}
-        />
-        <div className="mb-4">
-          <select
-            onChange={(e) => setCategory(e.target.value)}
-            className="border-2 rounded-md bg-slate-50 px-1 py-2"
-          >
-            <option hidden>Select from:</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={`${cat.name}`}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <input
-          className="px-4 py-2 rounded-full font-semibold bg-blue-700 text-white"
-          type="submit"
-          value="Add note"
-        />
-      </form>
-    </div>
+    <>
+      <div className="fixed z-40">
+        <button className="text-3xl p-4" onClick={() => router.push("/")}>
+          <MdOutlineArrowBackIosNew />
+        </button>
+      </div>
+      <div className="max-w-2xl px-4 pt-16 mx-auto">
+        <form onSubmit={submitData}>
+          <h1 className="text-2xl pb-2">Add new note</h1>
+          <textarea
+            className="w-full mb-2 rounded-md p-2 border-2 border-stone-400"
+            onChange={(e) => {
+              setContent(e.target.value);
+              console.log(content);
+            }}
+            placeholder="Start typing here..."
+            rows={6}
+            value={content}
+            ref={inputEl}
+          />
+          <div className="mb-4">
+            <select
+              onChange={(e) => setCategory(e.target.value)}
+              className="border-2 rounded-md bg-slate-50 px-1 py-2"
+            >
+              <option hidden>Place in a category:</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={`${cat.name}`}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <input
+            className="px-4 py-2 rounded-full font-semibold bg-blue-700 text-white"
+            type="submit"
+            value="Add note"
+          />
+        </form>
+      </div>
+    </>
   );
 };
 

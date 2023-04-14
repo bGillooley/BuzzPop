@@ -31,7 +31,7 @@ const Header: React.FC = () => {
   }
   if (session) {
     right = (
-      <div className="p-4">
+      <div className="p-4 dark:text-slate-100">
         <button className="" onClick={() => signOut()}>
           Log out
         </button>
@@ -40,7 +40,12 @@ const Header: React.FC = () => {
   }
 
   return (
-    <div className="fixed flex w-full items-end z-50 justify-end">{right}</div>
+    <div className="fixed flex w-full items-end z-50 justify-between">
+      <div className="p-4 text-xl font-semibold dark:text-slate-100">
+        buzzPop Notes
+      </div>
+      {right}
+    </div>
   );
 };
 
