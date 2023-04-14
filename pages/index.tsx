@@ -129,9 +129,6 @@ export default function Home({ initialResults }) {
                 <span className="whitespace-pre-line">{post.content}</span>
               </div>
             ))}
-            <button className="hidden" onClick={() => setDarkTheme(!darkTheme)}>
-              Set dark mode
-            </button>
           </div>
           <Link href="/create" passHref legacyBehavior>
             <button className="fixed flex justify-center items-center bottom-4 right-4 p-4 text-4xl bg-blue-700 rounded-full text-white shadow-md">
@@ -139,6 +136,14 @@ export default function Home({ initialResults }) {
               <span className="hidden md:inline-block text-lg">Add Note</span>
             </button>
           </Link>
+          <div className="fixed bottom-4 left-4">
+            <button
+              className="px-4 py-2 bg-blue-700 text-white rounded-md"
+              onClick={() => setDarkTheme(!darkTheme)}
+            >
+              Set {darkTheme ? "light" : "dark"} mode
+            </button>
+          </div>
         </div>
       </div>
     </>
