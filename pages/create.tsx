@@ -56,7 +56,6 @@ const Note: React.FC = ({ categories }) => {
             className="w-full mb-2 rounded-md p-2 border-2 border-stone-400"
             onChange={(e) => {
               setContent(e.target.value);
-              console.log(content);
             }}
             placeholder="Start typing here..."
             rows={6}
