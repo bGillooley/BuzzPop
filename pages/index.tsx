@@ -130,7 +130,7 @@ export default function Home({ initialResults }) {
               </div>
             ))}
             <div className="bg-white opacity-0 rounded-lg shadow-3xl shadow-stone-900 p-4 mb-4">
-              <span className="whitespace-pre-line">Hi. I'm invisible</span>
+              <span className="whitespace-pre-line">Hi. I am invisible</span>
             </div>
           </div>
           <Link href="/create" passHref legacyBehavior>
