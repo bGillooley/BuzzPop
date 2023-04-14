@@ -114,7 +114,6 @@ export default function Home({ initialResults }) {
                 onClick={() => {
                   filterResults(category.name);
                   activateFilterSelected("z" + category.id);
-                  console.log("LOOOOOK: Look: ...", activeFilter);
                 }}
               >
                 {category.name}
@@ -130,6 +129,9 @@ export default function Home({ initialResults }) {
                 <span className="whitespace-pre-line">{post.content}</span>
               </div>
             ))}
+            <div className="bg-white opacity-0 rounded-lg shadow-3xl shadow-stone-900 p-4 mb-4">
+              <span className="whitespace-pre-line">Hi. I'm invisible</span>
+            </div>
           </div>
           <Link href="/create" passHref legacyBehavior>
             <button className="fixed flex justify-center items-center bottom-4 right-4 p-4 text-4xl bg-blue-700 rounded-full text-white shadow-md">
