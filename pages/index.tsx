@@ -141,7 +141,7 @@ export default function Home({ initialResults }) {
           </Link>
           <div className="fixed bottom-4 left-4">
             <button
-              className="px-4 py-2 bg-blue-700 text-white rounded-md"
+              className="hidden px-4 py-2 bg-blue-700 text-white rounded-md"
               onClick={() => setDarkTheme(!darkTheme)}
             >
               Set {darkTheme ? "light" : "dark"} mode
