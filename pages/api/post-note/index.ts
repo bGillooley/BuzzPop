@@ -18,14 +18,7 @@ export default async function handle(req, res) {
           {
             category: {
               connect: {
-                id: 4,
-              },
-            },
-          },
-          {
-            category: {
-              connect: {
-                id: 5,
+                id: parseInt(categoryId),
               },
             },
           },
