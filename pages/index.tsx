@@ -124,7 +124,7 @@ export default function Home({ initialResults }) {
             {notesData.map((post) => (
               <div
                 key={post.id}
-                className="bg-white break-inside-avoid-column whitespace-nowrap rounded-lg shadow-3xl shadow-stone-900 p-4 mb-4"
+                className="bg-white text-sm break-inside-avoid-column whitespace-nowrap rounded-lg shadow-3xl shadow-stone-900 p-4 mb-4"
               >
                 <span className="whitespace-pre-line relative">
                   {post.postUrl !== null ? (
