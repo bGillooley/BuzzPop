@@ -17,13 +17,14 @@ const Note: React.FC = ({ categories }) => {
   const router = useRouter();
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
+  const [postUrl, setPostUrl] = useState("");
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
       const filterCategoryId = categories.find((cat) => cat.name === category);
       const categoryId = filterCategoryId.id;
-      const body = { categoryId, content };
+      const body = { categoryId, content, postUrl };
       await fetch("/api/post-note", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -61,6 +62,13 @@ const Note: React.FC = ({ categories }) => {
             rows={6}
             value={content}
             ref={inputEl}
+          />
+          <input
+            onChange={(e) => setPostUrl(e.target.value)}
+            type="text"
+            placeholder="Add URL here..."
+            value={postUrl}
+            className="w-full mb-2 rounded-md p-2 border-2 border-stone-400"
           />
           <div className="mb-4">
             <select

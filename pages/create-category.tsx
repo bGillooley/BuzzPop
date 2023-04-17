@@ -65,6 +65,7 @@ const Category: React.FC = ({ categories }) => {
           <input
             className="w-full mb-4 rounded-md p-2 border-2 border-stone-400"
             type="text"
+            placeholder="Enter a new category..."
             onChange={(e) => setCategory(e.target.value)}
             value={category}
             ref={inputEl}
@@ -83,7 +84,7 @@ const Category: React.FC = ({ categories }) => {
           >
             <div className="text-xl bold">{cat.name}</div>
             <div
-              className="flex text-red-700"
+              className="flex text-red-700 cursor-pointer hover:text-red-800"
               onClick={() => deletePost(cat.id)}
             >
               <BsTrash />

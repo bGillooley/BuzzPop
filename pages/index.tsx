@@ -124,9 +124,23 @@ export default function Home({ initialResults }) {
             {notesData.map((post) => (
               <div
                 key={post.id}
-                className="bg-white break-inside-avoid-column rounded-lg shadow-3xl shadow-stone-900 p-4 mb-4"
+                className="bg-white break-inside-avoid-column whitespace-nowrap rounded-lg shadow-3xl shadow-stone-900 p-4 mb-4"
               >
-                <span className="whitespace-pre-line">{post.content}</span>
+                <span className="whitespace-pre-line relative">
+                  {post.postUrl !== null ? (
+                    <div>
+                      <a href={post.postUrl} target="_blank">
+                        <img src={post.postImageUrl} />
+                      </a>
+
+                      <a href={post.postUrl} target="_blank">
+                        {post.postTitle}
+                      </a>
+                    </div>
+                  ) : (
+                    post.content
+                  )}
+                </span>
               </div>
             ))}
             <div className="bg-white opacity-0 rounded-lg shadow-3xl shadow-stone-900 p-4 mb-4">
