@@ -24,6 +24,7 @@ export default function Home({ initialResults }) {
   const [notesData, setNotesData] = useState(initialResults);
   const [darkTheme, setDarkTheme] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("");
   const handleDarkThemeToggle = () => {
     setDarkTheme(!darkTheme);
@@ -56,10 +57,12 @@ export default function Home({ initialResults }) {
   }, [darkTheme]);
 
   useEffect(() => {
+    setLoading(true);
     async function loadCats() {
       const res = await fetch("api/get-categories");
       const currentCats = await res.json();
       setCategories(currentCats);
+      setLoading(false);
     }
     loadCats();
   }, []);
@@ -89,8 +92,8 @@ export default function Home({ initialResults }) {
       </Head>
       <Header />
       <div className="w-full min-h-screen bg-slate-100 dark:bg-stone-800 ">
-        <div className="max-w-md pt-16 mx-auto px-4">
-          <div className="whitespace-nowrap w-full overflow-x-auto pb-6">
+        <div className="max-w-5xl pt-[96px] md:pt-[120px] mx-auto px-4">
+          <div className="whitespace-nowrap w-full flex md:justify-center overflow-x-auto pb-4 mb-4">
             <button
               className={`mr-2 p-2 border-2 border-blue-700 dark:text-white rounded-md ${
                 activeFilter === "z0" && "bg-blue-700 text-white"
@@ -120,26 +123,29 @@ export default function Home({ initialResults }) {
               </button>
             ))}
           </div>
-          <div className="relative columns-2">
+          <div className="relative mx-auto max-w-md columns-2">
             {notesData.map((post) => (
               <div
                 key={post.id}
-                className="bg-white text-sm break-inside-avoid-column whitespace-nowrap rounded-lg shadow-3xl shadow-stone-900 p-4 mb-4"
+                className="bg-white text-sm break-inside-avoid-column whitespace-nowrap rounded-lg shadow-3xl shadow-stone-900 p-2 mb-4"
               >
                 <span className="whitespace-pre-line relative">
-                  {post.postUrl !== null ? (
-                    <div>
+                  {!loading && (
+                    <div className="">
                       <a href={post.postUrl} target="_blank">
                         <img src={post.postImageUrl} />
                       </a>
 
-                      <a href={post.postUrl} target="_blank">
+                      <a
+                        href={post.postUrl}
+                        className="text-xs text-blue-700 leading-tight"
+                        target="_blank"
+                      >
                         {post.postTitle}
                       </a>
                     </div>
-                  ) : (
-                    post.content
                   )}
+                  {!loading && <div className="">{post.content}</div>}
                 </span>
               </div>
             ))}

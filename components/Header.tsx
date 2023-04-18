@@ -32,15 +32,20 @@ const Header: React.FC = () => {
   if (session) {
     right = (
       <div className="p-4 dark:text-slate-100">
-        <button className="" onClick={() => signOut()}>
-          Log out
-        </button>
+        <Link href="/profile" legacyBehavior>
+          <button className="">
+            <img
+              className="w-[54px] h-[54px] rounded-full md:w-[60px] md:h-[60px]"
+              src={session.user.image}
+            />
+          </button>
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="fixed flex w-full items-end z-50 justify-between">
+    <div className="fixed flex w-full z-50 items-center justify-between">
       <div className="p-4 text-xl font-semibold dark:text-slate-100">
         buzzPop Notes
       </div>

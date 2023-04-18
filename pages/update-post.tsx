@@ -11,23 +11,24 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-const Note: React.FC = ({ categories }) => {
+const Update: React.FC = ({ categories }) => {
   const inputEl = useRef(null);
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [content, setContent] = useState("");
-  const [category, setCategory] = useState("");
-  const [postUrl, setPostUrl] = useState("");
+  const query = router.query;
+
+  const [content, setContent] = useState(query.content);
+  // const [category, setCategory] = useState(query.category);
+  const [postUrl, setPostUrl] = useState(query.postUrl);
 
   const submitData = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     try {
-      const filterCategoryId = categories.find((cat) => cat.name === category);
-      console.log(filterCategoryId);
-      const categoryId = filterCategoryId.id;
-      const body = { categoryId, content, postUrl };
-      await fetch("/api/post-note", {
-        method: "POST",
+      const id = query.id;
+      const body = { content, postUrl };
+
+      await fetch(`/api/post-note/${id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
@@ -44,6 +45,11 @@ const Note: React.FC = ({ categories }) => {
     }, 0);
   }, []);
 
+  useEffect(() => {
+    if (router.isReady) {
+    }
+  }, []);
+
   return (
     <>
       <div className="fixed z-40">
@@ -53,7 +59,7 @@ const Note: React.FC = ({ categories }) => {
       </div>
       <div className="max-w-2xl px-4 pt-16 mx-auto">
         <form onSubmit={submitData}>
-          <h1 className="text-2xl pb-2">Add new note</h1>
+          <h1 className="text-2xl pb-2">Update note</h1>
           <textarea
             className="w-full mb-2 rounded-md p-2 border-2 border-stone-400"
             onChange={(e) => {
@@ -71,7 +77,7 @@ const Note: React.FC = ({ categories }) => {
             value={postUrl}
             className="w-full mb-2 rounded-md p-2 border-2 border-stone-400"
           />
-          <div className="mb-4">
+          {/*<div className="mb-4">
             <select
               onChange={(e) => setCategory(e.target.value)}
               className="border-2 rounded-md bg-slate-50 px-1 py-2"
@@ -83,11 +89,11 @@ const Note: React.FC = ({ categories }) => {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
           <input
             className="px-4 py-2 rounded-full font-semibold bg-blue-700 text-white"
             type="submit"
-            value="Add note"
+            value="Update Note"
           />
         </form>
       </div>
@@ -95,4 +101,4 @@ const Note: React.FC = ({ categories }) => {
   );
 };
 
-export default Note;
+export default Update;

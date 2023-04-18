@@ -14,7 +14,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 async function deletePost(id: string): Promise<void> {
-  await fetch(`/api/post-note/${id}`, {
+  await fetch(`/api/categories/${id}`, {
     method: "DELETE",
   });
   Router.reload();
@@ -34,7 +34,7 @@ const Category: React.FC = ({ categories }) => {
     e.preventDefault();
     try {
       const body = { category };
-      await fetch("/api/create-category", {
+      await fetch("/api/categories/create-category", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
